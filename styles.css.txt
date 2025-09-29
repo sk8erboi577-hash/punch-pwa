@@ -1,0 +1,4 @@
+/* 先放空；或把你的樣式搬過來 */
+.topbar{ padding:10px 16px; border-bottom:2px solid #2f3a49; background:#f6f8fb }
+.topbar h1{ margin:0; font: 600 18px/1.4 system-ui,-apple-system,"Noto Sans TC",Segoe UI,Roboto,Arial; }
+.topbar small{ color:#6b7280; font-weight:400; margin-left:6px }

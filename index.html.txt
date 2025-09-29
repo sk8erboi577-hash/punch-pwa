@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>打卡系統</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/public/manifest.json">
+  <meta name="theme-color" content="#16a34a">
+  <link rel="icon" href="/public/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/public/icon-192.png">
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>打卡系統 <small id="verBadge"></small></h1>
+  </header>
+
+  <main id="app">
+    <!-- ❶ 把你目前「打卡頁 index 的整個主要 HTML（不含 <html> <head> ）」貼進來 -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>打卡系統</title>
+
+<style>
+  :root{
+    --primary:#16a34a; --secondary:#3b82f6; --leave:#9333ea; --trip:#06b6d4; --corr:#f59e0b;
+    --border:#2f3a49; --muted:#6b7280; --chip:#e5e7eb; --card:#ffffff; --bg:#f6f8fb; --maxw:1200px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);font: clamp(16px,2.4vw,18.5px)/1.65 system-ui,-apple-system,"Noto Sans TC",Segoe UI,Roboto,Arial}
+  .wrap{max-width:min(var(--maxw),100vw);margin:0 auto;min-height:100dvh;padding: clamp(10px, 2.4vw, 20px)}
+  h1{margin:6px 0 14px;font-size:clamp(18px,2.6vw,22px)}
+  .grid{display:grid;gap:14px} .row{display:flex;gap:14px;flex-wrap:wrap} .row-lg{gap:16px}
+  input,button,select,textarea{font:inherit}
+  input[type="text"],input[type="password"],select,textarea{flex:1 1 220px;height: clamp(48px,6.5vh,56px);padding:12px 14px;border:2px solid var(--border);border-radius:14px;background:#fff}
+  .btn{height: clamp(48px,6.7vh,58px);padding:0 clamp(12px,2vw,18px);border:2px solid var(--border);border-radius:16px;cursor:pointer;background:#fff;font-weight:700;letter-spacing:.02em}
+  .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+  .btn-secondary{background:var(--secondary);border-color:var(--secondary);color:#fff}
+  .btn-leave{background:var(--leave);border-color:var(--leave);color:#fff}
+  .btn-trip{background:var(--trip);border-color:var(--trip);color:#fff}
+  .btn-corr{background:var(--corr);border-color:var(--corr);color:#fff}
+  .btn-ghost{background:#fff}
+  .card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding: clamp(12px,1.8vw,18px);height:100%}
+  .title{display:flex;align-items:center;justify-content:space-between;margin:6px 0 10px}
+  .muted{color:var(--muted)} .badge{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--chip);font-size:.92em}
+  .clock{border:2px solid var(--border);border-radius:14px;padding:10px 14px;background:#fff;font-weight:700}
+  .main-grid{display:grid;grid-template-columns:1.25fr 0.9fr;gap: clamp(10px,1.8vw,16px);grid-auto-rows:minmax(220px,1fr);align-items:stretch}
+  .h-100{height:100%}
+  #todayList .recentItem{display:grid;grid-template-columns:auto auto 1fr auto;gap:10px;align-items:center;min-height: clamp(42px,6vh,52px);font-size:.95em}
+  .type-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:.92em;font-weight:700;line-height:1;background:#e5e7eb;color:#111827}
+  .type-pill.in{background:#dcfce7;color:#166534} .type-pill.out{background:#dbeafe;color:#1d4ed8}
+  @media (max-width:960px){ .main-grid{ grid-template-columns:1fr; grid-auto-rows:minmax(220px,auto) } }
+  #tools{ display:grid; gap:14px; align-content:start }
+  #btn-in,#btn-out{height:14vh !important;font-size:min(7vw,5.2vh) !important;font-weight:900;line-height:1.06 !important;border-width:3px;border-radius:20px;display:flex;align-items:center;justify-content:center;padding:0}
+  #tools .btn{height:12vh !important;font-size:min(6.5vw,4.2vh) !important;font-weight:900;line-height:1.06 !important;border-width:3px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:0}
+  #freeze-mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.75);backdrop-filter:saturate(.6) blur(2px);z-index:9999}
+  #freeze-mask .box{background:#fff;border:2px solid var(--border);border-radius:16px;padding:16px 18px;font-weight:900;font-size:18px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  body.is-freeze{overflow:hidden}
+  #btn-loc,#locChip{display:none !important}
+  #btn-in,#btn-out,#tools .btn{white-space:nowrap;word-break:keep-all;overflow:hidden;text-overflow:clip;letter-spacing:0;padding-left:.1em;padding-right:.1em}
+.version-badge{
+  font-size:0.8em;
+  margin-left:10px;
+  padding:2px 8px;
+  border-radius:8px;
+  background:var(--chip);
+  color:var(--muted);
+}
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>
+  打卡系統
+  <span id="appVersion" class="version-badge"></span>
+</h1>
+
+
+  <div class="card grid">
+    <div class="row">
+      <input id="uid" type="text" placeholder="UID">
+      <input id="pass" type="password" placeholder="PASSCODE">
+    </div>
+    <div class="row">
+      <button id="btn-loc" class="btn btn-ghost">🚩 取得定位</button>
+      <div id="locChip" class="loc-line muted" style="flex:1">ℹ️ 打卡時會自動取得當下定位</div>
+    </div>
+  </div>
+
+  <div class="main-grid" style="margin-top:12px;">
+    <div class="grid h-100">
+      <div id="clock" class="clock">🕓 現在時間：--</div>
+
+      <div class="row row-lg">
+        <button id="btn-in"  class="btn btn-primary"  style="flex:1">上班打卡</button>
+        <button id="btn-out" class="btn btn-secondary" style="flex:1">下班打卡</button>
+      </div>
+
+      <div id="resp" class="card muted">尚未打卡</div>
+
+      <div class="card h-100">
+        <div class="title"><strong>今日摘要</strong><span id="sumBadge" class="badge" style="display:none">今日有異常</span></div>
+        <div id="sumIn"  class="row" style="margin-bottom:8px"><span class="type-pill in">上班</span>&nbsp;<span class="muted">—</span></div>
+        <div id="sumOut" class="row"><span class="type-pill out">下班</span>&nbsp;<span class="muted">—</span></div>
+        <div id="sumAno" class="muted" style="margin-top:8px"></div>
+      </div>
+
+      <div class="card h-100">
+        <div class="title"><strong>今日明細</strong><div class="muted">只顯示最近 <span id="limitLabel">3</span> 筆</div></div>
+        <div id="todayList" class="grid" style="gap:10px"></div>
+        <div style="margin-top:10px;text-align:center;"><button id="btnMore" class="btn btn-ghost" style="padding:8px 12px;border-radius:10px;">顯示更多</button></div>
+      </div>
+    </div>
+
+    <div id="tools" class="card h-100" style="display:grid;gap:12px;align-content:start">
+      <div class="title"><strong>工具</strong></div>
+      <button id="btn-leave"      class="btn btn-leave">💊請假申請</button>
+      <button id="btn-open-trip"  class="btn btn-trip">✈ 出差申請</button>
+      <button id="btn-open-corr"  class="btn btn-corr">📄 補卡申請</button>
+      <button id="btn-open-calendar" class="btn btn-ghost btn-xl">📅 查看月曆</button>
+      <button id="btn-help"       class="btn btn-ghost">❓ 使用說明</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="req-modal" style="display:none">
+  <div id="req-mask" style="position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100"></div>
+  <div id="req-card" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,92vw);max-height:88vh;overflow:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:101">
+    <div class="hd" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 id="req-title" style="margin:0;font-size:18px">—</h3>
+      <button id="req-close" class="btn">關閉</button>
+    </div>
+    <div id="req-body"></div>
+  </div>
+</div>
+
+<!-- Freeze -->
+<div id="freeze-mask"><div class="box">處理中…</div></div>
+
+<!-- Templates -->
+<template id="tpl-trip">
+  <div class="form" style="display:grid;gap:12px">
+    <div class="row" style="gap:10px">
+      <input id="trip-uid"  type="text" placeholder="UID（自動帶入）">
+      <input id="trip-pass" type="password" placeholder="PASSCODE（自動帶入）">
+    </div>
+    <label>日期 <input id="trip-date" type="date"></label>
+    <label>地點/說明 <input id="trip-location" type="text" placeholder="例如：台中●●客戶"></label>
+    <label>備註 <input id="trip-note" type="text" placeholder="（可留空）"></label>
+    <div style="text-align:right;margin-top:8px;"><button id="btn-trip-submit" class="btn btn-trip">送出出差申請</button></div>
+  </div>
+</template>
+
+<template id="tpl-corr">
+  <div class="form" style="display:grid;gap:12px">
+    <div class="row" style="gap:10px">
+      <input id="corr-uid"  type="text" placeholder="UID（自動帶入）">
+      <input id="corr-pass" type="password" placeholder="PASSCODE（自動帶入）">
+    </div>
+    <div class="row" style="gap:10px">
+      <label style="flex:1">日期 <input id="corr-date" type="date"></label>
+      <label style="flex:1">時間 <input id="corr-time" type="time"></label>
+    </div>
+    <label>類型
+      <select id="corr-type"><option value="in">上班</option><option value="out">下班</option></select>
+    </label>
+    <label>備註 <input id="corr-note" type="text" placeholder="（可留空）"></label>
+    <div style="text-align:right;margin-top:8px;"><button id="btn-corr-submit" class="btn btn-corr">送出補卡申請</button></div>
+  </div>
+</template>
+
+<template id="tpl-leave">
+  <div class="form" style="display:grid;gap:12px">
+    <div class="row" style="gap:10px">
+      <input id="lv-uid"  type="text" placeholder="UID（自動帶入）">
+      <input id="lv-pass" type="password" placeholder="PASSCODE（自動帶入）">
+    </div>
+    <label>請假類別
+      <select id="lv-type">
+        <option>特休</option><option>事假</option><option>病假</option>
+        <option>公假</option><option>喪假</option><option>婚假</option>
+        <option>產假</option><option>陪產假</option><option>補休</option>
+        <option>其他</option>
+      </select>
+    </label>
+    <div class="row" style="gap:12px;align-items:center">
+      <label style="display:flex;gap:8px;align-items:center;"><input id="lv-fullday" type="checkbox"> 整天</label>
+      <label style="display:flex;gap:8px;align-items:center;">時數（0.5 小時為單位）
+        <input id="lv-hours" type="number" min="0.5" step="0.5" placeholder="例如 4" style="width:120px">
+      </label>
+    </div>
+    <div class="row" style="gap:10px">
+      <label style="flex:1">開始請假日 <input id="lv-start" type="date"></label>
+      <label style="flex:1">請假結束日 <input id="lv-end"   type="date"></label>
+    </div>
+    <label>事由/備註 <textarea id="lv-note" placeholder="選填" rows="3" style="resize:vertical"></textarea></label>
+    <div style="text-align:right;margin-top:8px;"><button id="btn-leave-submit" class="btn btn-leave">送出申請</button></div>
+  </div>
+</template>
+
+<template id="tpl-help">
+  <div style="line-height:1.7">
+    <h4 style="margin:0 0 8px">快速上手</h4>
+    <ol style="margin:0 0 14px;padding-left:22px;display:grid;gap:10px;">
+      <li>向管理者取得 <b>UID</b> 與 <b>PASSCODE</b>，必須輸入正確才可打卡。</li>
+      <li>打卡時系統會自動取得定位，請確保瀏覽器／手機已允許「定位權限」。</li>
+      <li>按下「上班打卡 / 下班打卡」後，等待定位成功與伺服器回應，過程中頁面會暫時鎖定。</li>
+      <li>若出現「站外」異常，代表定位點與公司距離過遠，需補卡或說明。</li>
+      <li>如需 <b>出差 / 補卡 / 請假</b>，可使用右側的工具按鈕開啟表單，送出後會進入「待審核」。</li>
+    </ol>
+
+    <h4 style="margin:10px 0 8px">注意事項</h4>
+    <ul style="margin:0 0 14px;padding-left:22px;display:grid;gap:8px;list-style:disc;">
+      <li>本系統需在 <b>https://</b> 安全連線下使用，否則瀏覽器會封鎖定位。</li>
+      <li>若使用手機，請確定已開啟 GPS 並允許「此網站」使用定位。</li>
+      <li>打卡過程中如 30 秒內無回應，系統會自動解除鎖定，請重新操作。</li>
+      <li>請假、出差、補卡申請一律會先標記為 <b>pending</b>，需管理員審核通過才會反映到月曆。</li>
+      <li>建議第一次使用時，先嘗試打一次測試卡，確認定位與權限設定正常。</li>
+    </ul>
+
+    <h4 style="margin:10px 0 8px">常見問題</h4>
+    <ul style="margin:0;padding-left:22px;display:grid;gap:8px;list-style:disc;">
+      <li>定位不成功：請確認網路暢通、瀏覽器允許定位，必要時改用手機操作。</li>
+      <li>頁面卡住：等待 30 秒後系統會解除鎖定，或手動重新整理再嘗試。</li>
+      <li>申請送出後沒顯示：請確認 UID 與 PASSCODE 輸入正確，並重新整理檢查。</li>
+    </ul>
+  </div>
+</template>
+
+
+<script>
+(function(){
+  // ===== 基本選取器 =====
+  function $(s,el){ return (el||document).querySelector(s); }
+  function $$(s,el){ return Array.from((el||document).querySelectorAll(s)); }
+
+  // ===== 時鐘 =====
+  function tick(){
+    var el = $('#clock'); if(!el) return;
+    var d = new Date(), p = function(n){ return String(n).padStart(2,'0'); };
+    el.textContent = '🕓 現在時間：' + d.getFullYear() + '/' + p(d.getMonth()+1) + '/' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+  setInterval(tick, 1000); tick();
+
+  // ===== 凍結遮罩（保底 12 秒） =====
+  var __freezeTimer = null, __punching = false;
+  var FREEZE_MAX_WAIT_MS = 20000;
+ function setFreeze(on, msg){
+  const mask = document.getElementById('freeze-mask');
+  if (msg) mask.querySelector('.box').textContent = msg;
+  mask.style.display = on ? 'flex' : 'none';
+  document.body.classList.toggle('is-freeze', on);
+
+  // 只鎖上/下班兩顆，其他按鈕不動
+  ['btn-in','btn-out'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.disabled = on;
+  });
+}
+
+
+  // ===== 工具 =====
+  var esc=function(s){ return String(s||'').replace(/[&<>"]/g,function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]); }); };
+  function hmFromStr(str){ var m=String(str||'').match(/(\d{2}):(\d{2})/); return m?m[0]:'—'; }
+  // 讓瀏覽器「先把畫面更新一次」再繼續（確保凍結遮罩先被畫出來）
+function nextPaint(){
+  return new Promise(resolve=>{
+    requestAnimationFrame(()=>setTimeout(resolve,0));
+  });
+}
+
+  // ===== 摘要/清單 =====
+  var SHOW_ALL=false, ALL_LIST=[];
+  function renderSummary(sum){
+    var i=$('#sumIn'), o=$('#sumOut'), a=$('#sumAno'), b=$('#sumBadge');
+    var inStr  = sum && (sum.in || sum.in_time || '');
+    var outStr = sum && (sum.out || sum.out_time || '');
+    var anomalies = sum && (sum.anomalies || []);
+    if(i) i.innerHTML='<span class="type-pill in">上班</span>&nbsp;<span class="muted">'+(inStr?hmFromStr(inStr):'—')+'</span>';
+    if(o) o.innerHTML='<span class="type-pill out">下班</span>&nbsp;<span class="muted">'+(outStr?hmFromStr(outStr):'—')+'</span>';
+    if(a) a.textContent=(anomalies && anomalies.length) ? ('異常：'+anomalies.join('、')) : '';
+    if(b) b.style.display = (anomalies && anomalies.length) ? '' : 'none';
+  }
+  function renderTodayList(list){
+    var box=$('#todayList'); if(!box) return; box.innerHTML='';
+    (list||[]).forEach(function(it){
+      var row=document.createElement('div'); row.className='recentItem';
+      var dt=String(it.datetime||''); var hm=hmFromStr(dt);
+      var isIn=/in/i.test(it.type||'');
+      row.innerHTML= '<div class="badge">'+esc(hm||'--:--')+'</div>'
+        + '<div class="type-pill '+(isIn?'in':'out')+'">'+(isIn?'上班':'下班')+'</div>'
+        + '<div class="muted">'+esc(it.site_id||'')+'</div>'
+        + '<div class="muted">'+(typeof it.distance_m==='number' ? (it.distance_m+'m') : '')+'</div>';
+      box.appendChild(row);
+    });
+  }
+  function refreshSummaryAndList(){
+    var uid=$('#uid') ? $('#uid').value.trim() : '', pass=$('#pass') ? $('#pass').value.trim() : '';
+    if(!uid || !pass){ renderSummary({}); renderTodayList([]); var ll=$('#limitLabel'); if(ll) ll.textContent='3'; return; }
+    google.script.run.withSuccessHandler(function(ret){
+      renderSummary((ret && ret.summary)||{});
+      ALL_LIST=(ret && ret.list ? ret.list.slice() : []).sort(function(a,b){ return String(b.datetime||'').localeCompare(String(a.datetime||'')); });
+      var ll=$('#limitLabel'); if(ll) ll.textContent = SHOW_ALL ? ALL_LIST.length : 3;
+      renderTodayList(SHOW_ALL ? ALL_LIST : ALL_LIST.slice(0,3));
+    }).getTodaySummaryAndListSecure(uid, pass);
+  }
+
+  // === 節流 + 隨機延遲 ===
+  var _lastRefreshAt = 0;
+  function safeRefresh(force){
+    var now = Date.now();
+    if (!force && now - _lastRefreshAt < 8000) return; // 8s 內只跑一次
+    _lastRefreshAt = now; refreshSummaryAndList();
+  }
+
+  var elBtnMore = $('#btnMore');
+  if (elBtnMore) elBtnMore.addEventListener('click', function(){
+    SHOW_ALL = !SHOW_ALL;
+    var ll=$('#limitLabel'); if(ll) ll.textContent = SHOW_ALL ? ALL_LIST.length : 3;
+    renderTodayList(SHOW_ALL ? ALL_LIST : ALL_LIST.slice(0,3));
+  });
+
+  // 簡單位置快取（30 秒內 & 精度達標就直接沿用）
+window.__lastGeoCache = window.__lastGeoCache || null;
+
+function getFreshPosition(desiredAcc=60, timeoutMs=15000){
+  return new Promise((resolve, reject)=>{
+    // 1) 先檢查快取
+    try{
+      if (window.__lastGeoCache){
+        var ageMs = Date.now() - (window.__lastGeoCache.ts||0);
+        var acc   = window.__lastGeoCache.acc||Infinity;
+        if (ageMs < 30000 && acc <= desiredAcc){
+          return resolve(window.__lastGeoCache.pos);
+        }
+      }
+    }catch(_){}
+
+    if (!navigator.geolocation) {
+      reject(new Error('此裝置不支援定位'));
+      return;
+    }
+
+    var done  = false;
+    var wid   = null;
+    var timer = null;
+
+    function finish(pos, err){
+      if (done) return;
+      done = true;
+      try{ if(wid!==null) navigator.geolocation.clearWatch(wid); }catch(_){}
+      if (timer) clearTimeout(timer);
+
+      if (pos && pos.coords){
+        // 存入快取
+        try{
+          window.__lastGeoCache = {
+            ts:  Date.now(),
+            acc: Math.round(pos.coords.accuracy||9999),
+            pos
+          };
+        }catch(_){}
+        resolve(pos);
+      }else{
+        reject(err || new Error('定位失敗'));
+      }
+    }
+
+    // 2) watchPosition：通常較快拿到，達到精度就結束
+    try{
+      wid = navigator.geolocation.watchPosition(
+        (pos)=>{
+          var acc   = (pos.coords && pos.coords.accuracy) || Infinity;
+          var fresh = Date.now() - (pos.timestamp || Date.now()) < 60000;
+          if (fresh && acc <= desiredAcc) finish(pos);
+        },
+        (_err)=>{ /* 忽略，等 fallback */ },
+        { enableHighAccuracy:true, maximumAge:0, timeout:timeoutMs }
+      );
+    }catch(_){}
+
+    // 3) 超過 timeout 還沒達標 → getCurrentPosition 當保底
+    timer = setTimeout(()=>{
+      navigator.geolocation.getCurrentPosition(
+        (pos)=>finish(pos),
+        (err)=>finish(null, err),
+        { enableHighAccuracy:true, maximumAge:15000, timeout:8000 }
+      );
+    }, timeoutMs);
+  });
+}
+
+  // ===== 非阻擋版檢查（保留，但一律放行） =====
+  function ensureGeoReadyOrExplain(){ return true; }
+
+  /* ===== 打卡流程：強化為一定會解凍 ===== */
+async function punchNow(type){
+  if (__punching) return;                  // 防連點
+  const uid  = document.querySelector('#uid')?.value.trim();
+  const pass = document.querySelector('#pass')?.value.trim();
+  if(!uid || !pass){ alert('請先輸入 UID 與 PASSCODE'); return; }
+
+  __punching = true;
+  setFreeze(true, '正在取得定位…');
+
+  try{
+    // 取得即時定位（你原本的函式）
+    const pos = await getFreshPosition(60, 15000);
+
+    setFreeze(true, '正在送出打卡…');
+    const { latitude, longitude, accuracy } = pos.coords || {};
+    const payload = {
+      uid, passcode: pass, type,
+      lat: Number(latitude).toFixed(6),
+      lng: Number(longitude).toFixed(6),
+      note: '', userAgent: navigator.userAgent,
+      geo_at_iso: new Date().toISOString(),
+      accuracy: Math.round(accuracy||0)
+    };
+
+    await new Promise((resolve, reject)=>{
+      google.script.run
+        .withSuccessHandler(ret=>{
+          if(!ret || !ret.ok){
+            reject(new Error('打卡失敗：' + (ret && ret.message || '未知錯誤')));
+            return;
+          }
+          const resp = document.getElementById('resp');
+          if (resp){
+            const off = String(ret.verdict||'') === 'offsite';
+            resp.innerHTML = `<span class="badge" style="background:${off?'#FEF3C7':'#dcfce7'};color:${off?'#92400E':'#166534'}">
+              已${type==='in'?'上班':'下班'} · ${off?'站外⚠':'正常'}
+            </span>`;
+          }
+          try{ refreshSummaryAndList(); }catch(_){}
+          resolve();
+        })
+        .withFailureHandler(err=>{
+          reject(new Error('打卡失敗（伺服器）：' + (err && err.message || err)));
+        })
+        .saveEvent(payload);
+    });
+
+  }catch(err){
+    let msg = (err && err.message) ? String(err.message) : '無法取得即時定位。';
+    if (err && err.code===1) msg = '無法取得即時定位（請允許此網站的定位權限）';
+    else if (err && err.code===3) msg = '定位逾時，請移至空曠處重試';
+    alert(msg);
+  }finally{
+    // ★ 無論成功或失敗都會執行這裡，確保頁面解凍 + 可再次操作
+    __punching = false;
+    setFreeze(false);
+  }
+}
+
+
+  // ===== 綁定 =====
+  var el;
+  el = $('#btn-in');      if (el) el.addEventListener('click', function(){ if(!ensureGeoReadyOrExplain()) return; punchNow('in'); });
+  el = $('#btn-out');     if (el) el.addEventListener('click', function(){ if(!ensureGeoReadyOrExplain()) return; punchNow('out'); });
+  //el = $('#btn-refresh'); if (el) el.addEventListener('click', function(){ safeRefresh(true); });
+// ★ 把這裡換成你那本月曆 Web App 的「部署網址（exec）」：
+const CAL_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxv1lT26gb2g5TiiRVLmR3NknzlNN3Ro-IEjpGZSjPMgi4tSUEdyBPO8cdl7h69XabR/exec';
+
+document.getElementById('btn-open-calendar')?.addEventListener('click', function(){
+  // 預設會載本月，如要手動指定年月也可帶 query：?year=2025&month=9（見下方備註）
+  window.open(CAL_WEBAPP_URL, '_blank', 'noopener');
+});
+  // Modal
+  function openModal(title, htmlNode){ $('#req-title').textContent = title; var body=$('#req-body'); body.innerHTML=''; body.appendChild(htmlNode); $('#req-modal').style.display=''; }
+  function closeModal(){ $('#req-modal').style.display='none'; }
+  el = $('#req-close'); if (el) el.addEventListener('click', closeModal);
+  el = $('#req-mask');  if (el) el.addEventListener('click', closeModal);
+
+  // Trip
+  el = $('#btn-open-trip');
+  if (el) el.addEventListener('click', function(){
+    var tpl = document.getElementById('tpl-trip');
+    var root = tpl.content.firstElementChild.cloneNode(true);
+    var q = function(sel){ return root.querySelector(sel); };
+
+    q('#trip-uid').value  = ($('#uid') && $('#uid').value)  || '';
+    q('#trip-pass').value = ($('#pass') && $('#pass').value) || '';
+
+    var submitBtn = q('#btn-trip-submit'), submitting = false;
+    submitBtn.addEventListener('click', function(){
+      if(submitting) return;
+      var p = { uid:q('#trip-uid').value.trim(), passcode:q('#trip-pass').value.trim(),
+                date:q('#trip-date').value, location:q('#trip-location').value, note:q('#trip-note').value };
+      if (!p.uid || !p.passcode || !p.date || !p.location){ alert('請填寫：UID、PASSCODE、日期、地點/說明'); return; }
+      submitting = true; submitBtn.disabled = true; submitBtn.textContent = '送出中…';
+      google.script.run
+        .withSuccessHandler(function(ret){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出出差申請';
+          if(!ret || !ret.ok){ alert('出差申請失敗：' + (ret && ret.message || '未知錯誤')); return; }
+          alert('出差申請已送出'); closeModal();
+        })
+        .withFailureHandler(function(err){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出出差申請';
+          alert('出差申請失敗（伺服器）：' + (err && err.message || err));
+        })
+        .requestTripSimple(p);
+    });
+    openModal('出差申請', root);
+  });
+
+  // Correction
+  el = $('#btn-open-corr');
+  if (el) el.addEventListener('click', function(){
+    var tpl = document.getElementById('tpl-corr');
+    var root = tpl.content.firstElementChild.cloneNode(true);
+    var q = function(sel){ return root.querySelector(sel); };
+
+    q('#corr-uid').value  = ($('#uid') && $('#uid').value)  || '';
+    q('#corr-pass').value = ($('#pass') && $('#pass').value) || '';
+
+    var submitBtn = q('#btn-corr-submit'), submitting = false;
+    submitBtn.addEventListener('click', function(){
+      if(submitting) return;
+      var p = { uid:q('#corr-uid').value.trim(), passcode:q('#corr-pass').value.trim(), date:q('#corr-date').value,
+                time:q('#corr-time').value, type:q('#corr-type').value, note:q('#corr-note').value };
+      if (!p.uid || !p.passcode || !p.date || !p.time){ alert('請填寫：UID、PASSCODE、日期、時間'); return; }
+      submitting = true; submitBtn.disabled = true; submitBtn.textContent = '送出中…';
+      google.script.run
+        .withSuccessHandler(function(ret){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出補卡申請';
+          if(!ret || !ret.ok){ alert('補卡申請失敗：' + (ret && ret.message || '未知錯誤')); return; }
+          alert('補卡申請已送出'); closeModal();
+        })
+        .withFailureHandler(function(err){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出補卡申請';
+          alert('補卡申請失敗（伺服器）：' + (err && err.message || err));
+        })
+        .requestCorrectionSimple(p);
+    });
+    openModal('補卡申請', root);
+  });
+
+  // Leave
+  el = $('#btn-leave');
+  if (el) el.addEventListener('click', function(){
+    var tpl = document.getElementById('tpl-leave');
+    var root = tpl.content.firstElementChild.cloneNode(true);
+    var q = function(sel){ return root.querySelector(sel); };
+
+    q('#lv-uid').value  = ($('#uid') && $('#uid').value)  || '';
+    q('#lv-pass').value = ($('#pass') && $('#pass').value) || '';
+    var isFull = function(){ return q('#lv-fullday').checked; };
+
+    var submitBtn = q('#btn-leave-submit'), submitting = false;
+    submitBtn.addEventListener('click', function(){
+      if(submitting) return;
+      var p = {
+        uid:q('#lv-uid').value.trim(), passcode:q('#lv-pass').value.trim(), type:q('#lv-type').value,
+        start_date:q('#lv-start').value, end_date:q('#lv-end').value || q('#lv-start').value,
+        start_time:'', end_time:'', part:isFull()? 'FULL':'', mode:isFull()? 'full':'hours',
+        hours:isFull()? '' : q('#lv-hours').value, note:q('#lv-note').value
+      };
+      if (!p.uid || !p.passcode || !p.type || !p.start_date){ alert('請填寫：UID、PASSCODE、請假類別、開始日期'); return; }
+      if (p.mode==='hours' && !String(p.hours||'').trim()){ alert('請填寫時數（或勾整天）'); return; }
+
+      submitting = true; submitBtn.disabled = true; submitBtn.textContent = '送出中…';
+      google.script.run
+        .withSuccessHandler(function(ret){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出申請';
+          if(!ret || !ret.ok){ alert('請假申請失敗：' + (ret && ret.message || '未知錯誤')); return; }
+          alert('請假申請已送出'); closeModal();
+        })
+        .withFailureHandler(function(err){
+          submitting = false; submitBtn.disabled = false; submitBtn.textContent = '送出申請';
+          alert('請假申請失敗（伺服器）：' + (err && err.message || err));
+        })
+        .saveLeave(p);
+    });
+    openModal('請假申請', root);
+  });
+
+  // Help
+  el = $('#btn-help'); if (el) el.addEventListener('click', function(){ var tpl=document.getElementById('tpl-help'); openModal('使用說明', tpl.content.cloneNode(true)); });
+
+  // 初載：隨機延遲 + 節流刷新
+  window.addEventListener('load', function(){ setTimeout(function(){ safeRefresh(false); }, 300 + Math.random()*3000); });
+})();
+// 固定版本號（手動更新用）
+const APP_VERSION = "2025-09-28";  // ← 這裡換成你最新更新的日期
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  const el = document.getElementById("appVersion");
+  if(el) el.textContent = `版本${APP_VERSION}`;
+});
+
+</script>
+</body>
+</html>
+
+    <!-- 你原本的 CSS 可以先留在 inline <style>；之後再慢慢搬到 styles.css -->
+  </main>
+
+  <script>
+    // ❷ 這裡貼上你在第 1 部拿到的 GAS 網址（/exec 結尾）
+    window.BACKEND_URL = "https://script.google.com/macros/s/AKfycbyzPOkGDKakS3OFqbYL49qOQpv8DRt-O3T6oOJx-mnqnL-Z47xdiqZDUsoALA3E_nC9/exec";
+
+    // ❸ 顯示在標題旁邊的版本字串（你改一次就好）
+    window.APP_VERSION = "2025-09-29";
+  </script>
+
+  <script src="/app.js"></script>
+  <script>
+    // ❹ 註冊 Service Worker（PWA）
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
+</body>
+</html>
