@@ -1,89 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>打卡系統</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Punch PWA</title>
 
-<!-- PWA -->
-<link rel="manifest" href="./public/manifest.json">
-<meta name="theme-color" content="#16a34a">
+  <!-- CSS -->
+  <link rel="stylesheet" href="./styles.css" />
 
-<link rel="icon" href="./public/192.png" sizes="192x192">
-<link rel="apple-touch-icon" href="./public/192.png">
+  <!-- PWA -->
+  <link rel="manifest" href="./public/manifest.json" />
+  <meta name="theme-color" content="#16a34a" />
 
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="/styles.css">
+  <!-- Icons -->
+  <link rel="icon" href="./public/192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="./public/192.png" />
 </head>
 <body>
-<div class="wrap">
-  <header class="topbar">
-    <h1 class="app-title">
-      打卡系統
-      <small id="verBadge" class="ver-badge"></small>
-    </h1>
-    <div class="right">
-      <button id="btn-help" class="btn btn-ghost">❓ 使用說明</button>
-    </div>
-  </header>
-
-  <main class="grid">
-    <!-- 帳密 -->
-    <section class="card">
-      <div class="row">
-        <input id="uid" type="text" placeholder="UID">
-        <input id="pass" type="password" placeholder="PASSCODE">
-      </div>
-    </section>
-
-    <!-- 時鐘 -->
-    <section class="card">
-      <div id="clock" class="clock">🕓 現在時間：--</div>
-    </section>
-
-    <!-- 上下班 -->
-    <section class="card">
-      <div class="row">
-        <button id="btn-in"  class="btn btn-primary btn-xl" style="flex:1">上班打卡</button>
-        <button id="btn-out" class="btn btn-secondary btn-xl" style="flex:1">下班打卡</button>
-      </div>
-      <div id="resp" class="muted" style="margin-top:10px">尚未打卡</div>
-    </section>
-
-    <!-- 工具 -->
-    <section class="card tools">
-      <div class="title"><strong>工具</strong></div>
-      <button id="btn-leave"     class="btn btn-leave  btn-xl">💊 請假申請</button>
-      <button id="btn-open-trip" class="btn btn-trip   btn-xl">✈ 出差申請</button>
-      <button id="btn-open-corr" class="btn btn-corr   btn-xl">📄 補卡申請</button>
-      <button id="btn-calendar"  class="btn btn-ghost  btn-xl">📅 月曆</button>
-    </section>
-
-    <!-- 今日摘要 -->
-    <section class="card">
-      <div class="title"><strong>今日摘要</strong><span id="sumBadge" class="badge" style="display:none">今日有異常</span></div>
-      <div id="sumIn"  class="row"><span class="type-pill in">上班</span>&nbsp;<span class="muted">—</span></div>
-      <div id="sumOut" class="row"><span class="type-pill out">下班</span>&nbsp;<span class="muted">—</span></div>
-      <div id="sumAno" class="muted" style="margin-top:8px"></div>
-    </section>
-
-    <!-- 今日明細 -->
-    <section class="card">
-      <div class="title"><strong>今日明細</strong><div class="muted">只顯示最近 <span id="limitLabel">3</span> 筆</div></div>
-      <div id="todayList" class="grid" style="gap:10px"></div>
-      <div style="text-align:center;margin-top:8px">
-        <button id="btnMore" class="btn btn-ghost">顯示更多</button>
-      </div>
-    </section>
+  <main>
+    <h1>Punch PWA Demo</h1>
+    <p>如果你看到這個畫面，就代表不是 404 🎉</p>
+    <button id="btn">測試按鈕</button>
   </main>
-</div>
 
-<!-- 凍結遮罩 -->
-<div id="freeze-mask"><div class="box">處理中…</div></div>
-
-<!-- JS -->
-<script src="/app.js"></script>
+  <!-- JS -->
+  <script src="./app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js", { scope: "./" })
+          .then(reg => console.log("SW 註冊成功:", reg.scope))
+          .catch(err => console.error("SW 註冊失敗:", err));
+      });
+    }
+  </script>
 </body>
 </html>
-
